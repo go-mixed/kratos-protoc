@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package pb;
+
+import "google/protobuf/descriptor.proto";
+
+option go_package = "gopkg.in/go-mixed/protoc-gen-go-middleware/pb;pb";
+
+
+message MiddlewareCaller {
+  // The name of the middleware.
+  string name = 1;
+
+  // The arguments of the middleware.
+  repeated string arguments = 2;
+}
+
+extend google.protobuf.MethodOptions {
+  // See `Middleware`,
+  repeated MiddlewareCaller middleware = 72295830;
+}

@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package examples;
+
+import "google/api/annotations.proto";
+import "pb/middleware.proto";
+
+option go_package = "gopkg.in/go-mixed/protoc-gen-go-middleware.v1/examples;examples";
+
+message UserRequest {
+  string username = 1;
+}
+
+message Response {
+  int32 code = 1;
+  string message = 2;
+  string data = 3;
+}
+
+service TestService {
+  // 企业登录
+  rpc User(UserRequest) returns (Response) {
+    option (google.api.http) = {
+      post: "/v1/user",
+      body: "*",
+    };
+    // 这里的中间件顺序不是真正的执行顺序，真正的顺序在创建`http.Server`时候就已经确定了，比如：`http.Server(http.Middleware(middleware1, middleware2, middleware3))`
+    // the order of middleware in this place is NOT guaranteed, the real order is determined when creating `http.Server`, for example: `http.Server(http.Middleware(middleware1, middleware2, middleware3))`
+    option (pb.middleware) = {
+      name: "auth",
+      arguments: "bearer"
+      arguments: "token"
+    };
+    option (pb.middleware) = {
+      name: "throttle",
+      arguments: "10"
+    };
+    option (pb.middleware) = {
+      name: "log",
+    };
+  }
+  }
