@@ -1,10 +1,10 @@
 syntax = "proto3";
 
-package pb;
+package middleware;
 
 import "google/protobuf/descriptor.proto";
 
-option go_package = "gopkg.in/go-mixed/protoc-gen-go-middleware/pb;pb";
+option go_package = "github.com/go-mixed/kratos-middleware/protoc-gen-go-http/pb/middleware;middleware";
 
 
 message MiddlewareCaller {
@@ -16,6 +16,6 @@ message MiddlewareCaller {
 }
 
 extend google.protobuf.MethodOptions {
-  // See `Middleware`,
-  repeated MiddlewareCaller middleware = 72295830;
+  // See `MiddlewareCaller`,
+  repeated MiddlewareCaller caller = 72295830;
 }

@@ -14,7 +14,7 @@ The version is always following `kratos/protoc-gen-go-http`
 ```golang
 import (
     "github.com/go-kratos/kratos/v2/transport/http"
-	"gopkg.in/go-mixed/protoc-gen-go-middleware/named"
+	"github.com/go-mixed/kratos-middleware/named"
     "github.com/go-kratos/kratos/v2/middleware"
 )
 
@@ -35,7 +35,7 @@ func authMiddleware(next middleware.Handler) middleware.Handler {
 
 ## proto file:
 
-See [examples/test.proto](examples/test.proto)
+See [examples/test.proto](protoc-gen-go-http/examples/test.proto)
 
 ```proto
 rpc User(UserRequest) returns (Response) {
@@ -54,38 +54,40 @@ rpc User(UserRequest) returns (Response) {
 ```
 
 
-# Install for protoc
+# Install for protoc module
 
 ```bash
-go install gopkg.in/go-mixed/protoc-gen-go-middleware
+go install github.com/go-mixed/kratos-middleware/protoc-gen-go-http
 ```
 
 # How to Build `xxx_http.pb.go`
 
 1. Install [protoc](https://github.com/protocolbuffers/protobuf#protocol-compiler-installation)
 2. Install `protoc-gen-go`
-```bash
-go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
-```
-3. Build & Install `protoc-gen-go-middleware`(this package)
+    ```bash
+    go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+    ```
+3. Build & Install `protoc-gen-go-middleware`(see above)
 
-4. Build your proto(see [examples/test.proto](examples/test.proto)
+4. Build your proto(see [examples/test.proto](protoc-gen-go-http/examples/test.proto)
 
-```bash
-protoc --proto_path=./ --proto_path=/usr/include \ 
-  --go_out=paths=source_relative:. \
-  --go-middleware_out=paths=source_relative:. \  
-  examples/test.proto
-```
-> **NO NEED** `--go-http_out=`
+    ```bash
+    protoc --proto_path=./ \
+      --proto_path=./protoc-gen-go-http/pb \
+      --proto_path=/usr/include \
+      --go_out=paths=source_relative:. \
+      --go-http_out=paths=source_relative:. \
+      protoc-gen-go-http/examples/test.proto
+    ```
 
 # Development
 
-If you modified the `pb/middleware.proto`, then compile the proto file of `pb/middleware.proto`. Then reinstall this project
+If you modified the `protoc-gen-go-middleware/pb/middleware.proto`, then compile the proto file of `pb/middleware.proto`. Then reinstall this project
 
 ```bash
 protoc --proto_path=./ \
+  --proto_path=./protoc-gen-go-http/pb \
   --proto_path=/usr/include \
   --go_out=paths=source_relative:. \
-  pb/middleware.proto
+  protoc-gen-go-http/pb/middleware/middleware.proto
 ```

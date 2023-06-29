@@ -1,4 +1,3 @@
-/examples/*.go
+protoc-gen-go-http/examples/*.go
 .idea
 *.exe
-protoc-gen-go-middleware

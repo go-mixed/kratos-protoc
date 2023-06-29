@@ -2,12 +2,12 @@ package main
 
 import (
 	"fmt"
+	"github.com/go-mixed/kratos-middleware/protoc-gen-go-http/pb/middleware"
 	"google.golang.org/genproto/googleapis/api/annotations"
 	"google.golang.org/protobuf/compiler/protogen"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/reflect/protoreflect"
 	"google.golang.org/protobuf/types/descriptorpb"
-	"gopkg.in/go-mixed/protoc-gen-go-middleware/pb"
 	"net/http"
 	"os"
 	"regexp"
@@ -18,7 +18,7 @@ const (
 	contextPackage       = protogen.GoImportPath("context")
 	transportHTTPPackage = protogen.GoImportPath("github.com/go-kratos/kratos/v2/transport/http")
 	bindingPackage       = protogen.GoImportPath("github.com/go-kratos/kratos/v2/transport/http/binding")
-	namedPackage         = protogen.GoImportPath("gopkg.in/go-mixed/protoc-gen-go-middleware/named")
+	namedPackage         = protogen.GoImportPath("github.com/go-mixed/kratos-middleware/named")
 )
 
 var methodSets = make(map[string]int)
@@ -82,7 +82,7 @@ func genService(_ *protogen.Plugin, file *protogen.File, g *protogen.GeneratedFi
 
 		// 读取中间件列表
 		var middlewareDesces []*middlewareDesc
-		middlewares, ok := proto.GetExtension(method.Desc.Options(), pb.E_Middleware).([]*pb.MiddlewareCaller)
+		middlewares, ok := proto.GetExtension(method.Desc.Options(), middleware.E_Caller).([]*middleware.MiddlewareCaller)
 		if len(middlewares) > 0 && ok {
 			for _, middleware := range middlewares {
 				middlewareDesces = append(middlewareDesces, &middlewareDesc{
