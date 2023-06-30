@@ -72,14 +72,14 @@ The version is always following `kratos/protoc-gen-go-http`
 
 # API
 
-add to the initialization of `http.Server`
+add to the initialization of `http.Server`, Example:
 
    ```golang
    http.Server(
-	   http.Filter(named.EnableMiddleware()),
-       http.Middleware(named.KratosMiddleware("auth", authMiddleware)),
-       http.Middleware(named.KratosHandler("auth", authHandler)),
-       http.Middleware(named.NamedHandler("auth", authWrapMiddleware)),
+	   http.Filter(named.EnableMiddleware()), // enable the named middleware
+       http.Middleware(named.KratosMiddleware("auth", xxxKratosMiddleware)), // register a middleware named "auth"
+       http.Middleware(named.KratosHandler("auth", xxxKratosHandler)), // register a handler named "auth"
+       http.Middleware(named.HandlerWithArguments("auth", xxxHandlerWithArguments)), // register a handler with arguments named "auth"
    )
    ```
 
@@ -115,7 +115,7 @@ MUST enable the named middleware before using it
 ### 4. Register a named handler of middleware with arguments
 
    ```golang
-   http.Middleware(named.NamedHandler("auth", func(ctx context.Context, req interface{}, args ...string) (interface{}, error) {
+   http.Middleware(named.HandlerWithArguments("auth", func(ctx context.Context, req interface{}, args ...string) (interface{}, error) {
 	   if len(args) > 0 {
            fmt.Println(args[0]) 
        }

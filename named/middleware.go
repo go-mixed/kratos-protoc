@@ -5,10 +5,13 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware"
 )
 
+// Handler 命名kratos中间件的处理函数(带参数)
+// the handler function of named kratos middleware with arguments
 type Handler func(ctx context.Context, req interface{}, arguments ...string) (interface{}, error)
 
-// NamedHandler 将一个MiddlewareFunc中间件转换为命名的kratos的中间件
-func NamedHandler(name string, handler Handler) middleware.Middleware {
+// HandlerWithArguments 将一个named.Handler转换带参数的命名kratos中间件
+// turn a named.Handler to a named kratos middleware with arguments
+func HandlerWithArguments(name string, handler Handler) middleware.Middleware {
 	return func(nextHandler middleware.Handler) middleware.Handler {
 		// ctx 为当前请求的上下文
 		return func(ctx context.Context, req interface{}) (interface{}, error) {
@@ -27,6 +30,7 @@ func NamedHandler(name string, handler Handler) middleware.Middleware {
 }
 
 // KratosMiddleware 将一个kratos的中间件转换为命名kratos的中间件
+// turn a kratos middleware to a named kratos middleware
 func KratosMiddleware(name string, mw middleware.Middleware) middleware.Middleware {
 	return func(nextHandler middleware.Handler) middleware.Handler {
 		return func(ctx context.Context, req interface{}) (interface{}, error) {
@@ -38,6 +42,8 @@ func KratosMiddleware(name string, mw middleware.Middleware) middleware.Middlewa
 	}
 }
 
+// KratosHandler 将一个kratos的Handler转换为命名kratos的中间件
+// turn a kratos.Handler into a named kratos middleware
 func KratosHandler(name string, handler middleware.Handler) middleware.Middleware {
 	return func(nextHandler middleware.Handler) middleware.Handler {
 		return func(ctx context.Context, req interface{}) (interface{}, error) {
