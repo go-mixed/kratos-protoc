@@ -7,6 +7,29 @@ The version is always following `kratos/protoc-gen-go-http`
 
 **NO NEED** to install `kratos/protoc-gen-go-http`.
 
+# Build `xxx_http.pb.go`
+
+1. Install [protoc](https://github.com/protocolbuffers/protobuf#protocol-compiler-installation)
+2. Install `protoc-gen-go`
+    ```bash
+    go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+    ```
+3. Build & Install `protoc-gen-go-http`
+   ```bash
+   go install github.com/go-mixed/kratos-middleware/protoc-gen-go-http
+   ```
+4. Build your proto(see [examples/test.proto](protoc-gen-go-http/examples/test.proto))
+
+    ```bash
+    protoc --proto_path=./ \
+      --proto_path=./protoc-gen-go-http/pb \
+      --proto_path=/usr/include \
+      --go_out=paths=source_relative:. \
+      --go-http_out=paths=source_relative:. \
+      protoc-gen-go-http/examples/test.proto
+    ```
+
+
 # Usage
 
 1. Copy `protoc-gen-go-http/pb/middleware/middleware.proto` 
@@ -84,14 +107,14 @@ add to the initialization of `http.Server`, Example:
    ```
 
 ## Enable the named middleware
-MUST enable the named middleware before using it
+**MUST** enable the named middleware before using it
 
    ```golang
    http.Filter(named.EnableMiddleware())
    ```
 ## Register middleware
 
-### 1. Register a named middleware
+### 1. Register a named middleware of kratos
 
    ```golang
    http.Middleware(named.KratosMiddleware("auth", func(nextHandler middleware.Handler) middleware.Handler{
@@ -102,7 +125,7 @@ MUST enable the named middleware before using it
    })
    ```
 
-### 3. Or a named handler of middleware
+### 3. Or register a named handler of middleware of kratos
 
    ```golang
    http.Middleware(named.KratosHandler("auth", func(ctx context.Context, req interface{}) (interface{}, error) {
@@ -112,7 +135,7 @@ MUST enable the named middleware before using it
    ```
 - if error is not nil, the next handler will not be called, and the error will be returned to the client
 
-### 4. Register a named handler of middleware with arguments
+### 4. Or register a named handler of middleware with arguments
 
    ```golang
    http.Middleware(named.HandlerWithArguments("auth", func(ctx context.Context, req interface{}, args ...string) (interface{}, error) {
@@ -122,10 +145,13 @@ MUST enable the named middleware before using it
        return something, nil
    }))
    ```
+
 - if error is not nil, the next handler will not be called, and the error will be returned to the client
 - the arguments in the `api/xxx.proto` will be passed to the middleware when the middleware is called 
 
 ## Call the named middleware
+
+In the `api/xxx.proto`, add the `middleware.caller` option to the rpc
 
 ```protobuf
 rpc ApiName(Request) returns (Response) {
@@ -136,38 +162,14 @@ rpc ApiName(Request) returns (Response) {
     };
 }
 ```
+
 - the name of middleware is case-sensitive
 - the arguments will be ignored if the middleware is not registered with arguments
 
-# Install for protoc module
-
-```bash
-go install github.com/go-mixed/kratos-middleware/protoc-gen-go-http
-```
-
-# How to Build `xxx_http.pb.go`
-
-1. Install [protoc](https://github.com/protocolbuffers/protobuf#protocol-compiler-installation)
-2. Install `protoc-gen-go`
-    ```bash
-    go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
-    ```
-3. Build & Install `protoc-gen-go-middleware`(see above)
-
-4. Build your proto(see [examples/test.proto](protoc-gen-go-http/examples/test.proto))
-
-    ```bash
-    protoc --proto_path=./ \
-      --proto_path=./protoc-gen-go-http/pb \
-      --proto_path=/usr/include \
-      --go_out=paths=source_relative:. \
-      --go-http_out=paths=source_relative:. \
-      protoc-gen-go-http/examples/test.proto
-    ```
-
 # Development
 
-If you modified the `protoc-gen-go-middleware/pb/middleware.proto`, then compile the proto file of `pb/middleware.proto`. Then reinstall this project
+If you modified the `protoc-gen-go-http/pb/middleware/middleware.proto`, 
+you MUST recompile it. 
 
 ```bash
 protoc --proto_path=./ \
@@ -175,4 +177,11 @@ protoc --proto_path=./ \
   --proto_path=/usr/include \
   --go_out=paths=source_relative:. \
   protoc-gen-go-http/pb/middleware/middleware.proto
+```
+
+Then, manually install the `protoc-gen-go-http`
+
+```bash
+cd protoc-gen-go-http 
+go install .
 ```
