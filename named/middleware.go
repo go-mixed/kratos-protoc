@@ -7,8 +7,8 @@ import (
 
 type Handler func(ctx context.Context, req interface{}, arguments ...string) (interface{}, error)
 
-// WrapMiddleware 将一个MiddlewareFunc中间件转换为命名的kratos的中间件
-func WrapMiddleware(name string, handler Handler) middleware.Middleware {
+// NamedHandler 将一个MiddlewareFunc中间件转换为命名的kratos的中间件
+func NamedHandler(name string, handler Handler) middleware.Middleware {
 	return func(nextHandler middleware.Handler) middleware.Handler {
 		// ctx 为当前请求的上下文
 		return func(ctx context.Context, req interface{}) (interface{}, error) {
