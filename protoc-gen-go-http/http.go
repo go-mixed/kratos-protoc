@@ -56,12 +56,26 @@ func generateFileContent(gen *protogen.Plugin, file *protogen.File, g *protogen.
 	g.P("var _ = new(", contextPackage.Ident("Context"), ")")
 	g.P("var _ = ", bindingPackage.Ident("EncodeURL"))
 	g.P("const _ = ", transportHTTPPackage.Ident("SupportPackageIsVersion1"))
-	g.P("var _ = ", namedPackage.Ident("WrapMiddleware"))
+	if hasMiddleware(file) {
+		g.P("var _ = ", namedPackage.Ident("HandlerWithArguments"))
+	}
 	g.P()
 
 	for _, service := range file.Services {
 		genService(gen, file, g, service, omitempty, omitemptyPrefix)
 	}
+}
+
+func hasMiddleware(file *protogen.File) bool {
+	for _, service := range file.Services {
+		for _, method := range service.Methods {
+			middlewares, ok := proto.GetExtension(method.Desc.Options(), middleware.E_Caller).([]*middleware.MiddlewareCaller)
+			if len(middlewares) > 0 && ok {
+				return true
+			}
+		}
+	}
+	return false
 }
 
 func genService(_ *protogen.Plugin, file *protogen.File, g *protogen.GeneratedFile, service *protogen.Service, omitempty bool, omitemptyPrefix string) {
@@ -84,10 +98,10 @@ func genService(_ *protogen.Plugin, file *protogen.File, g *protogen.GeneratedFi
 		var middlewareDesces []*middlewareDesc
 		middlewares, ok := proto.GetExtension(method.Desc.Options(), middleware.E_Caller).([]*middleware.MiddlewareCaller)
 		if len(middlewares) > 0 && ok {
-			for _, middleware := range middlewares {
+			for _, mw := range middlewares {
 				middlewareDesces = append(middlewareDesces, &middlewareDesc{
-					Name:      middleware.GetName(),
-					Arguments: middleware.GetArguments(),
+					Name:      mw.GetName(),
+					Arguments: mw.GetArguments(),
 				})
 			}
 		}
