@@ -1,4 +1,4 @@
-package named
+package namedMiddleware
 
 import (
 	"context"

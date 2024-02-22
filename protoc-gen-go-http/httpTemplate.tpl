@@ -29,17 +29,10 @@ func _{{$svrType}}_{{.Name}}{{.Num}}_HTTP_Handler(srv {{$svrType}}HTTPServer) fu
 		if err := ctx.Bind(&in{{.Body}}); err != nil {
 			return err
 		}
-
-		{{- if not (eq .Body "")}}
+		{{- end}}
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
-		{{- end}}
-		{{- else}}
-		if err := ctx.BindQuery(&in{{.Body}}); err != nil {
-			return err
-		}
-		{{- end}}
 		{{- if .HasVars}}
 		if err := ctx.BindVars(&in); err != nil {
 			return err
@@ -47,18 +40,26 @@ func _{{$svrType}}_{{.Name}}{{.Num}}_HTTP_Handler(srv {{$svrType}}HTTPServer) fu
 		{{- end}}
 		http.SetOperation(ctx,Operation{{$svrType}}{{.OriginalName}})
 
-        {{- range .Middlewares}}
-        named.DispatchMiddleware(ctx, "{{.Name}}", {{- range .Arguments}}"{{.}}", {{end}})
-        {{- end}}
+		{{- range .Middlewares}}
+		namedMiddleware.DispatchMiddleware(ctx, "{{.Name}}", {{- range .Arguments}}"{{.}}", {{end}})
+		{{- end}}
 
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
 			return srv.{{.Name}}(ctx, req.(*{{.Request}}))
 		})
+
 		out, err := h(ctx, &in)
 		if err != nil {
 			return err
 		}
+
 		reply := out.(*{{.Reply}})
+
+		{{- if .Stream}}
+		if reply == nil { // return nil for streaming
+			return nil
+		}
+		{{- end}}
 		return ctx.Result(200, reply{{.ResponseBody}})
 	}
 }
@@ -93,6 +94,6 @@ func (c *{{$svrType}}HTTPClientImpl) {{.Name}}(ctx context.Context, in *{{.Reque
 	if err != nil {
 		return nil, err
 	}
-	return &out, err
+	return &out, nil
 }
 {{end}}

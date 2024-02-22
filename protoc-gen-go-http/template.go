@@ -13,7 +13,7 @@ var httpTemplate string
 type serviceDesc struct {
 	ServiceType string // Greeter
 	ServiceName string // helloworld.Greeter
-	Metadata    string // api/helloworld/helloworld.pb
+	Metadata    string // api/helloworld/helloworld.proto
 	Methods     []*methodDesc
 	MethodSets  map[string]*methodDesc
 }
@@ -35,6 +35,7 @@ type methodDesc struct {
 	ResponseBody string
 
 	Middlewares []*middlewareDesc
+	Stream      bool
 }
 
 func (s *serviceDesc) execute() string {

@@ -4,14 +4,29 @@ package examples;
 
 import "google/api/annotations.proto";
 import "middleware/middleware.proto";
+import "stream/stream.proto";
 
-option go_package = "github.com/go-mixed/kratos-middleware/protoc-gen-go-http/examples;examples";
+option go_package = "github.com/go-mixed/kratos-protoc/protoc-gen-go-http/examples;examples";
 
 message UserRequest {
   string username = 1;
 }
 
-message Response {
+message UserResponse {
+  int32 code = 1;
+  string message = 2;
+  string data = 3;
+}
+
+message OpenAIRequest {
+  string question = 1;
+  float temperature = 2;
+  float top_p = 3;
+  int32 max_tokens = 4;
+  bool stream = 5;
+}
+
+message OpenAIResponse {
   int32 code = 1;
   string message = 2;
   string data = 3;
@@ -19,7 +34,7 @@ message Response {
 
 service TestService {
   // 企业登录
-  rpc User(UserRequest) returns (Response) {
+  rpc User(UserRequest) returns (UserResponse) {
     option (google.api.http) = {
       post: "/v1/user",
       body: "*",
@@ -39,4 +54,16 @@ service TestService {
       name: "log",
     };
   }
+
+  rpc OpenAI(OpenAIRequest) returns (OpenAIResponse) {
+    option (google.api.http) = {
+      post: "/v1/openai",
+      body: "*",
+    };
+
+    option (stream.response) = {
+      enabled: true
+    };
+  }
+
   }

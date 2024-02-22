@@ -2,7 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/go-mixed/kratos-middleware/protoc-gen-go-http/pb/middleware"
+	"github.com/go-mixed/kratos-protoc/protoc-gen-go-http/pb/middleware"
+	"github.com/go-mixed/kratos-protoc/protoc-gen-go-http/pb/stream"
 	"google.golang.org/genproto/googleapis/api/annotations"
 	"google.golang.org/protobuf/compiler/protogen"
 	"google.golang.org/protobuf/proto"
@@ -15,10 +16,10 @@ import (
 )
 
 const (
-	contextPackage       = protogen.GoImportPath("context")
-	transportHTTPPackage = protogen.GoImportPath("github.com/go-kratos/kratos/v2/transport/http")
-	bindingPackage       = protogen.GoImportPath("github.com/go-kratos/kratos/v2/transport/http/binding")
-	namedPackage         = protogen.GoImportPath("github.com/go-mixed/kratos-middleware/named")
+	contextPackage         = protogen.GoImportPath("context")
+	transportHTTPPackage   = protogen.GoImportPath("github.com/go-kratos/kratos/v2/transport/http")
+	bindingPackage         = protogen.GoImportPath("github.com/go-kratos/kratos/v2/transport/http/binding")
+	namedMiddlewarePackage = protogen.GoImportPath("github.com/go-mixed/kratos-protoc/namedMiddleware")
 )
 
 var methodSets = make(map[string]int)
@@ -56,8 +57,8 @@ func generateFileContent(gen *protogen.Plugin, file *protogen.File, g *protogen.
 	g.P("var _ = new(", contextPackage.Ident("Context"), ")")
 	g.P("var _ = ", bindingPackage.Ident("EncodeURL"))
 	g.P("const _ = ", transportHTTPPackage.Ident("SupportPackageIsVersion1"))
-	if hasMiddleware(file) {
-		g.P("var _ = ", namedPackage.Ident("HandlerWithArguments"))
+	if hasNamedMiddleware(file) {
+		g.P("var _ = ", namedMiddlewarePackage.Ident("HandlerWithArguments"))
 	}
 	g.P()
 
@@ -66,7 +67,7 @@ func generateFileContent(gen *protogen.Plugin, file *protogen.File, g *protogen.
 	}
 }
 
-func hasMiddleware(file *protogen.File) bool {
+func hasNamedMiddleware(file *protogen.File) bool {
 	for _, service := range file.Services {
 		for _, method := range service.Methods {
 			middlewares, ok := proto.GetExtension(method.Desc.Options(), middleware.E_Caller).([]*middleware.MiddlewareCaller)
@@ -96,14 +97,19 @@ func genService(_ *protogen.Plugin, file *protogen.File, g *protogen.GeneratedFi
 
 		// 读取中间件列表
 		var middlewareDesces []*middlewareDesc
-		middlewares, ok := proto.GetExtension(method.Desc.Options(), middleware.E_Caller).([]*middleware.MiddlewareCaller)
-		if len(middlewares) > 0 && ok {
-			for _, mw := range middlewares {
+		if middlewareCallers, ok := proto.GetExtension(method.Desc.Options(), middleware.E_Caller).([]*middleware.MiddlewareCaller); ok && len(middlewareCallers) > 0 {
+			for _, mw := range middlewareCallers {
 				middlewareDesces = append(middlewareDesces, &middlewareDesc{
 					Name:      mw.GetName(),
 					Arguments: mw.GetArguments(),
 				})
 			}
+		}
+
+		// 读取stream的值
+		var enabledStream bool
+		if streamPb, ok := proto.GetExtension(method.Desc.Options(), stream.E_Response).(*stream.Stream); ok && streamPb.Enabled {
+			enabledStream = true
 		}
 
 		// 读取路由
@@ -112,6 +118,7 @@ func genService(_ *protogen.Plugin, file *protogen.File, g *protogen.GeneratedFi
 			for _, bind := range rule.AdditionalBindings {
 				httpRule := buildHTTPRule(g, service, method, bind, omitemptyPrefix)
 				httpRule.Middlewares = middlewareDesces
+				httpRule.Stream = enabledStream
 				sd.Methods = append(sd.Methods, httpRule)
 			}
 			httpRule := buildHTTPRule(g, service, method, rule, omitemptyPrefix)
@@ -121,6 +128,7 @@ func genService(_ *protogen.Plugin, file *protogen.File, g *protogen.GeneratedFi
 			path := fmt.Sprintf("%s/%s/%s", omitemptyPrefix, service.Desc.FullName(), method.Desc.Name())
 			httpRule := buildMethodDesc(g, method, http.MethodPost, path)
 			httpRule.Middlewares = middlewareDesces
+			httpRule.Stream = enabledStream
 			sd.Methods = append(sd.Methods, httpRule)
 		}
 
@@ -277,7 +285,7 @@ func buildPathVars(path string) (res map[string]*string) {
 }
 
 func replacePath(name string, value string, path string) string {
-	pattern := regexp.MustCompile(fmt.Sprintf(`(?i){([\s]*%s[\s]*)=?([^{}]*)}`, name))
+	pattern := regexp.MustCompile(fmt.Sprintf(`(?i){([\s]*%s\b[\s]*)=?([^{}]*)}`, name))
 	idx := pattern.FindStringIndex(path)
 	if len(idx) > 0 {
 		path = fmt.Sprintf("%s{%s:%s}%s",
