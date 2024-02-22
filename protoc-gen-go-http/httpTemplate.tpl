@@ -46,7 +46,11 @@ func _{{$svrType}}_{{.Name}}{{.Num}}_HTTP_Handler(srv {{$svrType}}HTTPServer) fu
 		{{- end}}
 
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.{{.Name}}(ctx, req.(*{{.Request}}))
+			res, err := srv.{{.Name}}(ctx, req.(*{{.Request}}))
+			if res == nil { // return nil for interface{} (nil ptr turn to interface{} will not be nil)
+                return nil, err
+            }
+            return res, err
 		})
 
 	    httpCtx := context.WithValue(ctx, "httpContext", ctx)
@@ -55,13 +59,13 @@ func _{{$svrType}}_{{.Name}}{{.Num}}_HTTP_Handler(srv {{$svrType}}HTTPServer) fu
 			return err
 		}
 
-		reply := out.(*{{.Reply}})
-
 		{{- if .Stream}}
-		if reply == nil { // return nil for streaming
-			return nil
-		}
+		if out == nil {
+            return nil
+        }
 		{{- end}}
+
+		reply, _ := out.(*{{.Reply}})
 		return ctx.Result(200, reply{{.ResponseBody}})
 	}
 }
