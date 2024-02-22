@@ -54,7 +54,7 @@ func NewTestService() *TestService {
 
 func (s *TestService) OpenAI(ctx context.Context, req *pb.OpenAIRequest) (*pb.OpenAIResponse, error) {
 	// write streaming content to http response
-	httpCtx := ctx.(kratosHttp.Context)
+	httpCtx := ctx.Value("httpContext").(kratosHttp.Context)
 
 	response, err := http.Post(ctx, "https://api.openai.com/v1/chat/completions", "application/json", ...)
 	if err != nil {

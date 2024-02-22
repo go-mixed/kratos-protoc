@@ -38,6 +38,7 @@ func _{{$svrType}}_{{.Name}}{{.Num}}_HTTP_Handler(srv {{$svrType}}HTTPServer) fu
 			return err
 		}
 		{{- end}}
+
 		http.SetOperation(ctx,Operation{{$svrType}}{{.OriginalName}})
 
 		{{- range .Middlewares}}
@@ -48,7 +49,8 @@ func _{{$svrType}}_{{.Name}}{{.Num}}_HTTP_Handler(srv {{$svrType}}HTTPServer) fu
 			return srv.{{.Name}}(ctx, req.(*{{.Request}}))
 		})
 
-		out, err := h(ctx, &in)
+	    httpCtx := context.WithValue(ctx, "httpContext", ctx)
+		out, err := h(httpCtx, &in)
 		if err != nil {
 			return err
 		}
