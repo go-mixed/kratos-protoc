@@ -108,7 +108,7 @@ func genService(_ *protogen.Plugin, file *protogen.File, g *protogen.GeneratedFi
 
 		// 读取stream的值
 		var enabledStream bool
-		if streamPb, ok := proto.GetExtension(method.Desc.Options(), stream.E_Response).(*stream.Stream); ok && streamPb.Enabled {
+		if streamPb, ok := proto.GetExtension(method.Desc.Options(), stream.E_Response).(*stream.Stream); streamPb != nil && ok && streamPb.Enabled {
 			enabledStream = true
 		}
 
@@ -123,6 +123,7 @@ func genService(_ *protogen.Plugin, file *protogen.File, g *protogen.GeneratedFi
 			}
 			httpRule := buildHTTPRule(g, service, method, rule, omitemptyPrefix)
 			httpRule.Middlewares = middlewareDesces
+			httpRule.Stream = enabledStream
 			sd.Methods = append(sd.Methods, httpRule)
 		} else if !omitempty {
 			path := fmt.Sprintf("%s/%s/%s", omitemptyPrefix, service.Desc.FullName(), method.Desc.Name())

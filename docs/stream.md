@@ -37,7 +37,7 @@ See: [Generate xxx_http.pb.go](../README.md#generate-xxx_http.pb.go)
 ## 4. Service code example
 
 ```golang
-package services
+package service
 
 import (
 	"context"
