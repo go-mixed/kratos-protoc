@@ -15,7 +15,7 @@ The version is always following `kratos/protoc-gen-go-http`
     ```
 3. Build & Install `protoc-gen-go-http`
    ```bash
-   go install github.com/go-mixed/kratos-protoc/protoc-gen-go-http
+   go install github.com/go-mixed/kratos-protoc/protoc-gen-go-http@latest
    ```
 
    **NO NEED** to install official `kratos/protoc-gen-go-http`.

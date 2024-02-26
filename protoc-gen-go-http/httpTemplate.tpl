@@ -60,7 +60,7 @@ func _{{$svrType}}_{{.Name}}{{.Num}}_HTTP_Handler(srv {{$svrType}}HTTPServer) fu
 		}
 
 		{{- if .Stream}}
-		if out == nil {
+		if out == nil { // skip response for stream
             return nil
         }
 		{{- end}}
