@@ -52,7 +52,7 @@ syntax = "proto3";
 
 import "google/api/annotations.proto";
 import "middleware/middleware.proto";
-import "stream/stream.proto";
+import "response/response.proto";
 
 // middleware.caller example
 rpc User(UserRequest) returns (UserResponse) {
@@ -68,20 +68,20 @@ rpc User(UserRequest) returns (UserResponse) {
 }
 
 // stream.response example
-rpc OpenAI(OpenAIRequest) returns (stream OpenAIResponse) {
+rpc OpenAI(OpenAIRequest) returns (OpenAIResponse) {
     option (google.api.http) = {
       post: "/v1/openai",
       body: "*",
     };
-    option (stream.response) = {
-      enabled: true,
+    option (response.options) = {
+      custom: true,
     };
 }
 ```
 
 # Development
 
-If you want to modify the `protoc-gen-go-http/pb/middleware/middleware.proto` or `stream.proto`, 
+If you want to modify the `protoc-gen-go-http/pb/middleware/middleware.proto` or `response/response.proto`, 
 you MUST recompile it. 
 
 ```bash
@@ -93,7 +93,7 @@ protoc --proto_path=./ \
 protoc --proto_path=./ \
   --proto_path=./protoc-gen-go-http/pb \
   --go_out=paths=source_relative:. \
-  protoc-gen-go-http/pb/stream/stream.proto
+  protoc-gen-go-http/pb/response/response.proto
 ```
 
 Then, manually install the `protoc-gen-go-http`

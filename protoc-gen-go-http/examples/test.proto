@@ -4,7 +4,7 @@ package examples;
 
 import "google/api/annotations.proto";
 import "middleware/middleware.proto";
-import "stream/stream.proto";
+import "response/response.proto";
 
 option go_package = "github.com/go-mixed/kratos-protoc/protoc-gen-go-http/examples;examples";
 
@@ -61,8 +61,8 @@ service TestService {
       body: "*",
     };
 
-    option (stream.response) = {
-      enabled: true
+    option (response.options) = {
+      custom: true
     };
   }
 

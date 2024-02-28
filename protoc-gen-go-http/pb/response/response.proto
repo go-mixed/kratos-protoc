@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package response;
+
+import "google/protobuf/descriptor.proto";
+
+option go_package = "github.com/go-mixed/kratos-protoc/protoc-gen-go-http/pb/response;response";
+
+
+message ResponseOptions {
+  // No return standard response if nil
+  bool custom = 1;
+}
+
+extend google.protobuf.MethodOptions {
+  // See `Response` for more details.
+  ResponseOptions options = 72295831;
+}

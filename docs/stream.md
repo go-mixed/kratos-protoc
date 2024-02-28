@@ -2,7 +2,7 @@
 
 ## 1. Copy proto files to your project
 
-- `protoc-gen-go-http/pb/stream/stream.proto` -> `your_project/third_party/stream/stream.proto`
+- `protoc-gen-go-http/pb/response/response.proto` -> `your_project/third_party/response/response.proto`
 
 ## 2. Write `xxx.proto` like this:
 
@@ -14,7 +14,7 @@ Add the `stream.response` option to the rpc
 syntax = "proto3";
 
 import "google/api/annotations.proto";
-import "stream/stream.proto";
+import "response/response.proto";
 
 // middleware.caller example
 rpc User(UserRequest) returns (UserResponse) {
@@ -22,8 +22,8 @@ rpc User(UserRequest) returns (UserResponse) {
       post: "/v1/user",
       body: "*",
     };
-    option (stream.response) = {
-      enabled: true,
+    option (response.options) = {
+      custom: true,
     };
 }
 

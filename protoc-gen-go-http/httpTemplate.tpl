@@ -59,8 +59,8 @@ func _{{$svrType}}_{{.Name}}{{.Num}}_HTTP_Handler(srv {{$svrType}}HTTPServer) fu
 			return err
 		}
 
-		{{- if .Stream}}
-		if out == nil { // skip response for stream
+		{{- if .ResponseOptions.Custom}}
+		if out == nil { // skip response if out is nil and response.custom is true
             return nil
         }
 		{{- end}}
