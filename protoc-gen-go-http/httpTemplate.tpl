@@ -25,7 +25,7 @@ func Register{{.ServiceType}}HTTPServer(s *http.Server, srv {{.ServiceType}}HTTP
 func _{{$svrType}}_{{.Name}}{{.Num}}_HTTP_Handler(srv {{$svrType}}HTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in {{.Request}}
-		{{- if .HasBody && !.HttpOptions.CustomRequest}}
+		{{- if and (.HasBody) (not .HttpOptions.CustomRequest)}}
 		if err := ctx.Bind(&in{{.Body}}); err != nil {
 			return err
 		}

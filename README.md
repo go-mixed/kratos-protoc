@@ -94,7 +94,7 @@ rpc OpenAI(OpenAIRequest) returns (OpenAIResponse) {
 
 # Development
 
-If you want to modify the `protoc-gen-go-http/pb/middleware/middleware.proto` or `response/response.proto`, 
+If you modified the `middleware/middleware.proto` or `http/options.proto`, 
 you MUST recompile it. 
 
 ```bash
