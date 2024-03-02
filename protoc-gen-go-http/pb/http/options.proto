@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package response;
+
+import "google/protobuf/descriptor.proto";
+
+option go_package = "github.com/go-mixed/kratos-protoc/protoc-gen-go-http/pb/http;http";
+
+
+message HttpOptions {
+  // Only parse the query/url vars to the request proto message.
+  bool custom_request = 1;
+  // No return standard response if nil
+  bool custom_response = 2;
+}
+
+extend google.protobuf.MethodOptions {
+  // See `Response` for more details.
+  HttpOptions options = 72295831;
+}

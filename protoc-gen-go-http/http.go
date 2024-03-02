@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
+	httpPb "github.com/go-mixed/kratos-protoc/protoc-gen-go-http/pb/http"
 	"github.com/go-mixed/kratos-protoc/protoc-gen-go-http/pb/middleware"
-	"github.com/go-mixed/kratos-protoc/protoc-gen-go-http/pb/response"
 	"google.golang.org/genproto/googleapis/api/annotations"
 	"google.golang.org/protobuf/compiler/protogen"
 	"google.golang.org/protobuf/proto"
@@ -107,9 +107,10 @@ func genService(_ *protogen.Plugin, file *protogen.File, g *protogen.GeneratedFi
 		}
 
 		// 读取stream的值
-		var responseOptions responseOptionsDesc
-		if responseOptionsPb, ok := proto.GetExtension(method.Desc.Options(), response.E_Options).(*response.ResponseOptions); responseOptionsPb != nil && ok {
-			responseOptions.Custom = responseOptionsPb.GetCustom()
+		var httpOptions httpOptionsDesc
+		if responseOptionsPb, ok := proto.GetExtension(method.Desc.Options(), httpPb.E_Options).(*httpPb.HttpOptions); responseOptionsPb != nil && ok {
+			httpOptions.CustomRequest = responseOptionsPb.GetCustomRequest()
+			httpOptions.CustomResponse = responseOptionsPb.GetCustomResponse()
 		}
 
 		// 读取路由
@@ -118,18 +119,18 @@ func genService(_ *protogen.Plugin, file *protogen.File, g *protogen.GeneratedFi
 			for _, bind := range rule.AdditionalBindings {
 				httpRule := buildHTTPRule(g, service, method, bind, omitemptyPrefix)
 				httpRule.Middlewares = middlewareDesces
-				httpRule.ResponseOptions = responseOptions
+				httpRule.HttpOptions = httpOptions
 				sd.Methods = append(sd.Methods, httpRule)
 			}
 			httpRule := buildHTTPRule(g, service, method, rule, omitemptyPrefix)
 			httpRule.Middlewares = middlewareDesces
-			httpRule.ResponseOptions = responseOptions
+			httpRule.HttpOptions = httpOptions
 			sd.Methods = append(sd.Methods, httpRule)
 		} else if !omitempty {
 			path := fmt.Sprintf("%s/%s/%s", omitemptyPrefix, service.Desc.FullName(), method.Desc.Name())
 			httpRule := buildMethodDesc(g, method, http.MethodPost, path)
 			httpRule.Middlewares = middlewareDesces
-			httpRule.ResponseOptions = responseOptions
+			httpRule.HttpOptions = httpOptions
 			sd.Methods = append(sd.Methods, httpRule)
 		}
 

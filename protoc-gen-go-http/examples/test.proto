@@ -4,33 +4,9 @@ package examples;
 
 import "google/api/annotations.proto";
 import "middleware/middleware.proto";
-import "response/response.proto";
+import "http/options.proto";
 
 option go_package = "github.com/go-mixed/kratos-protoc/protoc-gen-go-http/examples;examples";
-
-message UserRequest {
-  string username = 1;
-}
-
-message UserResponse {
-  int32 code = 1;
-  string message = 2;
-  string data = 3;
-}
-
-message OpenAIRequest {
-  string question = 1;
-  float temperature = 2;
-  float top_p = 3;
-  int32 max_tokens = 4;
-  bool stream = 5;
-}
-
-message OpenAIResponse {
-  int32 code = 1;
-  string message = 2;
-  string data = 3;
-}
 
 service TestService {
   // 企业登录
@@ -55,15 +31,49 @@ service TestService {
     };
   }
 
-  rpc OpenAI(OpenAIRequest) returns (OpenAIResponse) {
+  rpc Upload(Empty) returns (UploadResponse) {
     option (google.api.http) = {
-      post: "/v1/openai",
+      post: "/v1/upload",
       body: "*",
     };
 
-    option (response.options) = {
-      custom: true
+    option (http.options) = {
+      custom_request: true
     };
   }
 
+  rpc Download(DownloadRequest) returns (Empty) {
+    option (google.api.http) = {
+      get: "/v1/download",
+    };
+
+    option (http.options) = {
+      custom_response: true
+    };
   }
+
+}
+
+message Empty {}
+
+message UserRequest {
+  string username = 1;
+}
+
+message UserResponse {
+  int32 code = 1;
+  string message = 2;
+  string data = 3;
+}
+
+
+message UploadResponse {
+  int32 code = 1;
+  string message = 2;
+  string data = 3;
+}
+
+message DownloadRequest {
+  string filename = 1;
+}
+

@@ -34,8 +34,8 @@ type methodDesc struct {
 	Body         string
 	ResponseBody string
 
-	Middlewares     []*middlewareDesc
-	ResponseOptions responseOptionsDesc
+	Middlewares []*middlewareDesc
+	HttpOptions httpOptionsDesc
 }
 
 func (s *serviceDesc) execute() string {
@@ -59,6 +59,7 @@ type middlewareDesc struct {
 	Arguments []string
 }
 
-type responseOptionsDesc struct {
-	Custom bool
+type httpOptionsDesc struct {
+	CustomRequest  bool
+	CustomResponse bool
 }
