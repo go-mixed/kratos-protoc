@@ -30,6 +30,9 @@ func _{{$svrType}}_{{.Name}}{{.Num}}_HTTP_Handler(srv {{$svrType}}HTTPServer) fu
 			return err
 		}
 		{{- end}}
+		{{- if .HttpOptions.CustomRequest}}
+		// skip ctx.Bind() if "http.options.custom_request" is true
+		{{- end}}
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
@@ -47,7 +50,7 @@ func _{{$svrType}}_{{.Name}}{{.Num}}_HTTP_Handler(srv {{$svrType}}HTTPServer) fu
 
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
 			res, err := srv.{{.Name}}(ctx, req.(*{{.Request}}))
-			if res == nil { // return nil for interface{} (nil ptr turn to interface{} will not be nil)
+			if res == nil { // return nil for interface{} (nil ptr wont be nil if it cast to interface{})
                 return nil, err
             }
             return res, err
@@ -60,7 +63,7 @@ func _{{$svrType}}_{{.Name}}{{.Num}}_HTTP_Handler(srv {{$svrType}}HTTPServer) fu
 		}
 
 		{{- if .HttpOptions.CustomResponse}}
-		if out == nil { // skip response if out is nil and response.custom is true
+		if out == nil { // skip response if out is nil and "http.options.custom_response" is true
             return nil
         }
 		{{- end}}
