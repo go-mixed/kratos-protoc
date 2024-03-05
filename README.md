@@ -5,21 +5,6 @@ So you can build `xxx_http.pb.go` via this package
 
 The version is always following `kratos/protoc-gen-go-http`
 
-
-# Prerequisites 
-
-1. Install [protoc](https://github.com/protocolbuffers/protobuf#protocol-compiler-installation)
-2. Install `protoc-gen-go`
-    ```bash
-    go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
-    ```
-3. Build & Install `protoc-gen-go-http`
-   ```bash
-   go install github.com/go-mixed/kratos-protoc/protoc-gen-go-http@latest
-   ```
-
-   **NO NEED** to install official `kratos/protoc-gen-go-http`.
-
 #  Usage
 
 - [**Named middleware**](docs/named_middleware.md): 
@@ -36,6 +21,20 @@ The version is always following `kratos/protoc-gen-go-http`
 - [**File upload**](docs/upload.md)
   - Support upload file as request body
   - Support upload file via `multipart/form-data` request
+
+# Prerequisites
+
+1. Install [protoc](https://github.com/protocolbuffers/protobuf#protocol-compiler-installation)
+2. Install `protoc-gen-go`
+```bash
+go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+```
+3. Build & Install `protoc-gen-go-http`
+```bash
+go install github.com/go-mixed/kratos-protoc/protoc-gen-go-http@latest
+```
+
+**NO NEED** to install official `kratos/protoc-gen-go-http`.
 
 
 # Generate xxx_http.pb.go
