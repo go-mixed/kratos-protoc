@@ -22,7 +22,7 @@ import "google/api/annotations.proto";
 import "http/options.proto";
 
 service Test {
-    rpc Upload(UploadRequest) returns (UploadResponse) {
+    rpc Upload(Empty) returns (UploadResponse) {
         option (google.api.http) = {
           post: "/v1/upload",
           body: "*",
@@ -33,8 +33,7 @@ service Test {
     }
 }
 
-message UploadRequest {
-    string file_name = 1;
+message Empty {
 }
 
 message UploadResponse {
@@ -68,7 +67,7 @@ func NewTestService() *TestService {
 }
 
 
-func (s *TestService) Upload(ctx context.Context, req *pb.UploadRequest) (*pb.UploadResponse, error) {
+func (s *TestService) Upload(ctx context.Context, _ *pb.Empty) (*pb.UploadResponse, error) {
 	// get the http context of kratos
 	httpCtx := ctx.Value("httpContext").(kratosHttp.Context)
 
@@ -79,7 +78,7 @@ func (s *TestService) Upload(ctx context.Context, req *pb.UploadRequest) (*pb.Up
 	}
 	defer file.Close()
 	
-	writer, err := os.Create("your_file_path/" + req.FileName)
+	writer, err := os.Create("your_file_path/" + file.Name())
 	if err != nil {
 		return nil, err
 	}

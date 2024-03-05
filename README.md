@@ -64,7 +64,7 @@ syntax = "proto3";
 
 import "google/api/annotations.proto";
 import "middleware/middleware.proto";
-import "response/response.proto";
+import "http/options.proto";
 
 // middleware.caller example
 rpc User(UserRequest) returns (UserResponse) {
@@ -79,38 +79,51 @@ rpc User(UserRequest) returns (UserResponse) {
     };
 }
 
-// stream.response example
-rpc OpenAI(OpenAIRequest) returns (OpenAIResponse) {
+// stream response example
+rpc Download(DownloadRequest) returns (EmptyResponse) {
     option (google.api.http) = {
-      post: "/v1/openai",
+      post: "/v1/download",
       body: "*",
     };
-    option (response.options) = {
-      custom: true,
+    option (http.options) = {
+      custom_response: true,
     };
 }
+
+// upload request example
+rpc Upload(EmptyResponse) returns (UploadResponse)
+    option (google.api.http) = {
+      post: "/v1/upload",
+      body: "*",
+    };
+    option (http.options) = {
+      custom_request: true,
+    };
+}
+
 ```
 
 # Development
 
 If you modified the `middleware/middleware.proto` or `http/options.proto`, 
-you MUST recompile it. 
+you MUST recompile it.
 
 ```bash
+cd protoc-gen-go-http
+
 protoc --proto_path=./ \
   --proto_path=./protoc-gen-go-http/pb \
   --go_out=paths=source_relative:. \
-  protoc-gen-go-http/pb/middleware/middleware.proto
+  pb/middleware/middleware.proto
   
 protoc --proto_path=./ \
   --proto_path=./protoc-gen-go-http/pb \
   --go_out=paths=source_relative:. \
-  protoc-gen-go-http/pb/http/options.proto
+  pb/http/options.proto
 ```
 
 Then, manually install the `protoc-gen-go-http`
 
 ```bash
-cd protoc-gen-go-http 
 go install .
 ```
