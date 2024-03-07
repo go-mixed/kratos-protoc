@@ -47,50 +47,56 @@ See: [Generate xxx_http.pb.go](../README.md#generate-xxx_http.pb.go)
 **MUST** enable the named middleware before using it.
 
 ```golang
-http.Filter(namedMiddlware.EnableMiddleware())
+http.Filter(namedMiddlware.EnableMiddleware)
 ```
 
 ## 5. Register the named middleware in `http.Server`, 3 types of middleware are supported
 
 
-### Type 1. Register a named middleware of kratos
+### Type 1. Wrap a kratos middleware to a named middleware
 
 ```golang
 http.Server(
-    http.Filter(namedMiddlware.EnableMiddleware()), // enable the named middleware
-    http.Middleware(namedMiddlware.KratosMiddleware("auth", func(nextHandler middleware.Handler) middleware.Handler{
-       return func(ctx context.Context, req interface{}) (interface{}, error) {
-           // do something
-           return nextHandler(ctx, req)
-       }
-    }),
+    http.Filter(namedMiddlware.EnableMiddleware), // enable the named middleware
+    http.Middleware(
+		namedMiddlware.WrapKratosMiddleware("auth", func(nextHandler middleware.Handler) middleware.Handler{
+           return func(ctx context.Context, req interface{}) (interface{}, error) {
+               // do something
+               return nextHandler(ctx, req)
+           }
+        }),
+    )
 )
 ```
 
-### Type 2. register a named handler of middleware of kratos
+### Type 2. register a named middleware
 
 ```golang
 http.Server(
-    http.Filter(namedMiddlware.EnableMiddleware()), // enable the named middleware
-    http.Middleware(namedMiddlware.KratosHandler("auth", func(ctx context.Context, req interface{}) (interface{}, error) {
-       return something, nil
-    })),
+    http.Filter(namedMiddlware.EnableMiddleware), // enable the named middleware
+    http.Middleware(
+		namedMiddlware.Middlware("auth", func(ctx context.Context, req interface{}) (interface{}, error) {
+            return something, nil
+        })
+    ),
 )
    
 ```
 - if error is not nil, the next handler will not be called, and the error will be returned to the client
 
-### Type 3. register a named handler of middleware with arguments
+### Type 3. register a named middleware with arguments
 
 ```golang
 http.Server(
-    http.Filter(namedMiddlware.EnableMiddleware()), // enable the named middleware
-    http.Middleware(namedMiddlware.HandlerWithArguments("auth", func(ctx context.Context, req interface{}, args ...string) (interface{}, error) {
-       if len(args) > 0 {
-           fmt.Println(args[0]) 
-       }
-       return something, nil
-	})),
+    http.Filter(namedMiddlware.EnableMiddleware), // enable the named middleware
+    http.Middleware(
+		namedMiddlware.MiddlewareWithArguments("auth", func(ctx context.Context, req interface{}, args ...string) (interface{}, error) {
+            if len(args) > 0 {
+                fmt.Println(args[0]) 
+            }
+            return something, nil
+	    })
+    ),
 )
 ```
 
@@ -110,8 +116,8 @@ http.Server(
    
    httpSrv := http.Server(
        http.Address(":8000")
-       http.Filter(namedMiddlware.EnableMiddleware()),  // enable the named middleware
-       http.Middleware(namedMiddlware.KratosMiddleware("auth", authMiddleware)), // register a named middleware of "auth"
+       http.Filter(namedMiddlware.EnableMiddleware),  // enable the named middleware
+       http.Middleware(namedMiddlware.WrapKratosMiddleware("auth", authMiddleware)), // register a named middleware
    )
    
    grpcSrv := grpc.NewServer(grpc.Address(":9000"))
