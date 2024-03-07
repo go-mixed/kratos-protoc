@@ -58,7 +58,7 @@ func generateFileContent(gen *protogen.Plugin, file *protogen.File, g *protogen.
 	g.P("var _ = ", bindingPackage.Ident("EncodeURL"))
 	g.P("const _ = ", transportHTTPPackage.Ident("SupportPackageIsVersion1"))
 	if hasNamedMiddleware(file) {
-		g.P("var _ = ", namedMiddlewarePackage.Ident("HandlerWithArguments"))
+		g.P("var _ = ", namedMiddlewarePackage.Ident("MiddlewareWithArguments"))
 	}
 	g.P()
 

@@ -2,6 +2,8 @@ package namedMiddleware
 
 import "context"
 
+type namedMiddlewareKey struct{}
+
 type namedMiddleware struct {
 	middlewareCallers []*middlewareCaller
 }
@@ -19,7 +21,7 @@ func (nm *namedMiddleware) dispatch(name string, arguments ...string) {
 }
 
 func fromContext(ctx context.Context) *namedMiddleware {
-	return ctx.Value(namedMiddleware{}).(*namedMiddleware)
+	return ctx.Value(namedMiddlewareKey{}).(*namedMiddleware)
 }
 
 func match(ctx context.Context, name string) *middlewareCaller {
@@ -36,5 +38,5 @@ func match(ctx context.Context, name string) *middlewareCaller {
 }
 
 func newContext(ctx context.Context, nm *namedMiddleware) context.Context {
-	return context.WithValue(ctx, namedMiddleware{}, nm)
+	return context.WithValue(ctx, namedMiddlewareKey{}, nm)
 }
