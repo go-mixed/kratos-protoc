@@ -47,7 +47,7 @@ See: [Generate xxx_http.pb.go](../README.md#generate-xxx_http.pb.go)
 **MUST** enable the named middleware before using it.
 
 ```golang
-http.Filter(namedMiddlware.EnableMiddleware)
+http.Filter(namedMiddleware.EnableMiddleware)
 ```
 
 ## 5. Register the named middleware in `http.Server`, 3 types of middleware are supported
@@ -57,9 +57,9 @@ http.Filter(namedMiddlware.EnableMiddleware)
 
 ```golang
 http.Server(
-    http.Filter(namedMiddlware.EnableMiddleware), // enable the named middleware
+    http.Filter(namedMiddleware.EnableMiddleware), // enable the named middleware
     http.Middleware(
-		namedMiddlware.WrapKratosMiddleware("auth", func(nextHandler middleware.Handler) middleware.Handler{
+		namedMiddleware.WrapKratosMiddleware("auth", func(nextHandler middleware.Handler) middleware.Handler{
            return func(ctx context.Context, req interface{}) (interface{}, error) {
                // do something
                return nextHandler(ctx, req)
@@ -73,9 +73,9 @@ http.Server(
 
 ```golang
 http.Server(
-    http.Filter(namedMiddlware.EnableMiddleware), // enable the named middleware
+    http.Filter(namedMiddleware.EnableMiddleware), // enable the named middleware
     http.Middleware(
-		namedMiddlware.Middlware("auth", func(ctx context.Context, req interface{}) (interface{}, error) {
+		namedMiddleware.Middleware("auth", func(ctx context.Context, req interface{}) (interface{}, error) {
             return something, nil
         })
     ),
@@ -88,9 +88,9 @@ http.Server(
 
 ```golang
 http.Server(
-    http.Filter(namedMiddlware.EnableMiddleware), // enable the named middleware
+    http.Filter(namedMiddleware.EnableMiddleware), // enable the named middleware
     http.Middleware(
-		namedMiddlware.MiddlewareWithArguments("auth", func(ctx context.Context, req interface{}, args ...string) (interface{}, error) {
+		namedMiddleware.MiddlewareWithArguments("auth", func(ctx context.Context, req interface{}, args ...string) (interface{}, error) {
             if len(args) > 0 {
                 fmt.Println(args[0]) 
             }
@@ -110,14 +110,14 @@ http.Server(
    import (
        "context"
        "github.com/go-kratos/kratos/v2/transport/http"
-       "github.com/go-mixed/kratos-protoc/namedMiddlware"
+       "github.com/go-mixed/kratos-protoc/namedMiddleware"
        "github.com/go-kratos/kratos/v2/middleware"
    )
    
    httpSrv := http.Server(
        http.Address(":8000")
-       http.Filter(namedMiddlware.EnableMiddleware),  // enable the named middleware
-       http.Middleware(namedMiddlware.WrapKratosMiddleware("auth", authMiddleware)), // register a named middleware
+       http.Filter(namedMiddleware.EnableMiddleware),  // enable the named middleware
+       http.Middleware(namedMiddleware.WrapKratosMiddleware("auth", authMiddleware)), // register a named middleware
    )
    
    grpcSrv := grpc.NewServer(grpc.Address(":9000"))
@@ -135,5 +135,4 @@ http.Server(
            return next(ctx, req)
        }
    }
-   
 ```
