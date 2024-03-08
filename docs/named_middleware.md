@@ -47,7 +47,7 @@ See: [Generate xxx_http.pb.go](../README.md#generate-xxx_http.pb.go)
 **MUST** enable the named middleware before using it.
 
 ```golang
-http.Filter(namedMiddleware.EnableMiddleware)
+http.Filter(namedMiddleware.EnableMiddleware())
 ```
 
 ## 5. Register the named middleware in `http.Server`, 3 types of middleware are supported
@@ -57,7 +57,7 @@ http.Filter(namedMiddleware.EnableMiddleware)
 
 ```golang
 http.Server(
-    http.Filter(namedMiddleware.EnableMiddleware), // enable the named middleware
+    http.Filter(namedMiddleware.EnableMiddleware()), // enable the named middleware
     http.Middleware(
 		namedMiddleware.WrapKratosMiddleware("auth", func(nextHandler middleware.Handler) middleware.Handler{
            return func(ctx context.Context, req interface{}) (interface{}, error) {
@@ -73,7 +73,7 @@ http.Server(
 
 ```golang
 http.Server(
-    http.Filter(namedMiddleware.EnableMiddleware), // enable the named middleware
+    http.Filter(namedMiddleware.EnableMiddleware()), // enable the named middleware
     http.Middleware(
 		namedMiddleware.Middleware("auth", func(ctx context.Context, req interface{}) (interface{}, error) {
             return something, nil
@@ -88,7 +88,7 @@ http.Server(
 
 ```golang
 http.Server(
-    http.Filter(namedMiddleware.EnableMiddleware), // enable the named middleware
+    http.Filter(namedMiddleware.EnableMiddleware()), // enable the named middleware
     http.Middleware(
 		namedMiddleware.MiddlewareWithArguments("auth", func(ctx context.Context, req interface{}, args ...string) (interface{}, error) {
             if len(args) > 0 {
@@ -116,7 +116,7 @@ http.Server(
    
    httpSrv := http.Server(
        http.Address(":8000")
-       http.Filter(namedMiddleware.EnableMiddleware),  // enable the named middleware
+       http.Filter(namedMiddleware.EnableMiddleware()),  // enable the named middleware
        http.Middleware(namedMiddleware.WrapKratosMiddleware("auth", authMiddleware)), // register a named middleware
    )
    
