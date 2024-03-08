@@ -2,6 +2,7 @@ package namedMiddleware
 
 import (
 	"context"
+	kratosHttp "github.com/go-kratos/kratos/v2/transport/http"
 	"net/http"
 )
 
@@ -20,7 +21,7 @@ func enableNamedMiddlewareHandler(handler http.Handler) http.Handler {
 //	 http.Filter(namedMiddleware.EnableNamedMiddleware()),
 //	 http.Handler(namedMiddleware.WrapKratosMiddleware("auth", yourMiddleware)),
 //	)
-func EnableNamedMiddleware() func(http.Handler) http.Handler {
+func EnableNamedMiddleware() kratosHttp.FilterFunc {
 	return enableNamedMiddlewareHandler
 }
 
