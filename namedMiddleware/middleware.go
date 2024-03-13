@@ -5,6 +5,8 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware"
 )
 
+var MiddlewareWithArguments = struct{}{}
+
 // WrapKratosMiddleware 封装kratos的中间件为命名中间件
 // wrap kratos middleware to named middleware
 func WrapKratosMiddleware(name string, mw middleware.Middleware) middleware.Middleware {
