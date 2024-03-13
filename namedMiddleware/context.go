@@ -40,3 +40,22 @@ func match(ctx context.Context, name string) *middlewareCaller {
 func newContext(ctx context.Context, nm *namedMiddleware) context.Context {
 	return context.WithValue(ctx, namedMiddlewareKey{}, nm)
 }
+
+type callerContextKey struct{}
+
+func newCallerContext(ctx context.Context, caller *middlewareCaller) context.Context {
+	return context.WithValue(ctx, callerContextKey{}, caller)
+}
+
+func fromCallerContext(ctx context.Context) (*middlewareCaller, bool) {
+	c, ok := ctx.Value(callerContextKey{}).(*middlewareCaller)
+	return c, ok
+}
+
+func GetArguments(ctx context.Context) []string {
+	if c, ok := fromCallerContext(ctx); ok {
+		return c.arguments
+	}
+
+	return nil
+}

@@ -37,7 +37,6 @@ rpc User(UserRequest) returns (UserResponse) {
 ```
 
 - the name of middleware is case-sensitive
-- If you set the arguments, you must use "Type 3", It'll be ignored if you use other types
 
 ## 3. Generate `xxx_http.pb.go`
 
@@ -91,35 +90,26 @@ type Handler func(ctx context.Context, lastReq interface{}) (req interface{}, er
 - `lastReq` is previous request from the previous middleware
 - `req` is the request to the next middleware, you may modify the request and return, or return "lastReq" directly
 
-### Type 3. register a named middleware with arguments
+## 6. Get the arguments
 
 ```golang
 http.Server(
     http.Filter(namedMiddleware.EnableMiddleware()), // enable the named middleware
     http.Middleware(
-		namedMiddleware.MiddlewareWithArguments("auth", func(ctx context.Context, lastReq interface{}, args ...string) (req interface{}, err error) {
-            if len(args) > 0 {
-                fmt.Println(args[0]) 
-            }
+        namedMiddleware.Middleware("auth", func(ctx context.Context, lastReq interface{}) (req interface{}, err error) {
+            arguments := namedMiddleware.GetArguments(ctx) // get the arguments
+
             return req, nil
-	    })
+        })
     ),
 )
 ```
 
-- if error is not nil, the next handler will not be called, and the error will be returned to the client
-- the arguments in the `api/xxx.proto` will be passed to the middleware when the middleware is called
-
-```
-type Handler func(ctx context.Context, lastReq interface{}, arguments ...string) (req interface{}, err error)
-```
-- `lastReq` is previous request from the previous middleware
-- `arguments` is from "middleware.caller.arguments" in the `api/xxx.proto` file
-- `req` is the request to the next middleware, you may modify the request and return, or return "lastReq" directly
+- `namedMiddleware.GetArguments(ctx)` will return the arguments of this named middleware who is calling
+- **You can only get the arguments in the named middleware body**
 
 
-
-## 6. Example:
+## 7. Example:
 
 ```golang 
    import (
@@ -132,7 +122,9 @@ type Handler func(ctx context.Context, lastReq interface{}, arguments ...string)
    httpSrv := http.Server(
        http.Address(":8000")
        http.Filter(namedMiddleware.EnableMiddleware()),  // enable the named middleware
-       http.Middleware(namedMiddleware.WrapKratosMiddleware("auth", authMiddleware)), // register a named middleware
+       http.Middleware(
+            namedMiddleware.WrapKratosMiddleware("auth", authMiddleware) // register a named middleware
+       ),
    )
    
    grpcSrv := grpc.NewServer(grpc.Address(":9000"))
@@ -146,6 +138,7 @@ type Handler func(ctx context.Context, lastReq interface{}, arguments ...string)
    
    func authMiddleware(next middleware.Handler) middleware.Handler {
        return func(ctx context.Context, req interface{}) (interface{}, error) {
+           arguments := namedMiddleware.GetArguments(ctx) // get the arguments
            // do something
            return next(ctx, req)
        }
