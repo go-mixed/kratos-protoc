@@ -75,8 +75,8 @@ http.Server(
 http.Server(
     http.Filter(namedMiddleware.EnableMiddleware()), // enable the named middleware
     http.Middleware(
-		namedMiddleware.Middleware("auth", func(ctx context.Context, req interface{}) (interface{}, error) {
-            return something, nil
+		namedMiddleware.Middleware("auth", func(ctx context.Context, lastReq interface{}) (req interface{}, error) {
+            return lastReq, nil
         })
     ),
 )
@@ -84,17 +84,24 @@ http.Server(
 ```
 - if error is not nil, the next handler will not be called, and the error will be returned to the client
 
+```
+type Handler func(ctx context.Context, lastReq interface{}) (req interface{}, err error)
+```
+
+- `lastReq` is previous request from the previous middleware
+- `req` is the request to the next middleware, you may modify the request and return, or return "lastReq" directly
+
 ### Type 3. register a named middleware with arguments
 
 ```golang
 http.Server(
     http.Filter(namedMiddleware.EnableMiddleware()), // enable the named middleware
     http.Middleware(
-		namedMiddleware.MiddlewareWithArguments("auth", func(ctx context.Context, req interface{}, args ...string) (interface{}, error) {
+		namedMiddleware.MiddlewareWithArguments("auth", func(ctx context.Context, lastReq interface{}, args ...string) (req interface{}, err error) {
             if len(args) > 0 {
                 fmt.Println(args[0]) 
             }
-            return something, nil
+            return req, nil
 	    })
     ),
 )
@@ -102,6 +109,14 @@ http.Server(
 
 - if error is not nil, the next handler will not be called, and the error will be returned to the client
 - the arguments in the `api/xxx.proto` will be passed to the middleware when the middleware is called
+
+```
+type Handler func(ctx context.Context, lastReq interface{}, arguments ...string) (req interface{}, err error)
+```
+- `lastReq` is previous request from the previous middleware
+- `arguments` is from "middleware.caller.arguments" in the `api/xxx.proto` file
+- `req` is the request to the next middleware, you may modify the request and return, or return "lastReq" directly
+
 
 
 ## 6. Example:

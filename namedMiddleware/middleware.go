@@ -37,7 +37,8 @@ func Middleware(name string, handler middleware.Handler) middleware.Middleware {
 
 // Handler 命名kratos中间件的处理函数(带参数)
 // the handler function of named kratos middleware with arguments
-type Handler func(ctx context.Context, req interface{}, arguments ...string) (interface{}, error)
+// you may return "lastReq" to "req" if you don't want to change the request
+type Handler func(ctx context.Context, lastReq interface{}, arguments ...string) (req interface{}, err error)
 
 // MiddlewareWithArguments 注册一个带参数的命名kratos中间件
 // register a named kratos middleware with arguments
