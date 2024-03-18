@@ -9,11 +9,11 @@
 
 All the file content is in the request body.
 
-1. Copy proto files to your project
+### 1. Copy proto files to your project
 
 - `protoc-gen-go-http/pb/http/options.proto` -> `your_project/third_party/http/options.proto`
 
-2. Set "custom_request" to `true` in the `api/xxx.proto` file
+### 2. Set "custom_request" to `true` in the `api/xxx.proto` file
 
 ```proto
 syntax = "proto3";
@@ -42,11 +42,11 @@ message UploadResponse {
 
 ```
 
-3. Generate `xxx_http.pb.go`
+### 3. Generate `xxx_http.pb.go`
 
 See: [Generate xxx_http.pb.go](../README.md#generate-xxx_http.pb.go)
 
-4. Service code example
+### 4. Service code example
 
 ```golang
 package service
@@ -65,7 +65,6 @@ type TestService struct {
 func NewTestService() *TestService {
     return &TestService{}
 }
-
 
 func (s *TestService) Upload(ctx context.Context, _ *pb.Empty) (*pb.UploadResponse, error) {
     // get the http context of kratos
@@ -95,7 +94,7 @@ func (s *TestService) Upload(ctx context.Context, _ *pb.Empty) (*pb.UploadRespon
 }
 ```
 
-5. Call the service
+### 5. Call the service
 
 ```http request
 POST /v1/upload?file=the_file_name HTTP/1.1
@@ -228,5 +227,4 @@ func GetFileFromRequest(r *http.Request, fieldName string, maxSize int64) (*uplo
         deletingPath: file.Name(),
     }, nil
 }
-
 ```

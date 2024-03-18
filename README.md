@@ -7,11 +7,11 @@ The version is always following `kratos/protoc-gen-go-http`
 
 #  Usage
 
-- [**Named middleware**](docs/named_middleware.md): 
+- [**Named middleware**](docs/named_middleware.md)
   - Call the middleware by name in the `api/xxx.proto` file
   - Multiple middleware
   - Middleware arguments
-- [**Custom Request/Response for HTTP**](docs/custom.md):
+- [**Custom Request/Response for HTTP**](docs/custom.md)
   - Custom request：Parse the request body with your own logic
   - Custom response：Write custom HEAD/BODY to http response, Or SSE/Chunked/Download
   - Not for gRPC
