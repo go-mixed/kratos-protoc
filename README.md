@@ -13,11 +13,11 @@ The version is always following `kratos/protoc-gen-go-http`
   - Middleware arguments
 - [**Custom Request/Response for HTTP**](docs/custom.md)
   - Custom request：Parse the request body with your own logic
-  - Custom response：Write custom HEAD/BODY to http response, Or SSE/Chunked/Download
+  - Custom response：Write custom HEAD/BODY to http response, Or SSE/Chunked/Download etc.
   - Not for gRPC
 - [**File upload**](docs/upload.md)
-  - Support upload file as request body
-  - Support upload file via `multipart/form-data` request
+  - RAW data of the request body
+  - `multipart/form-data` request
 
 # Prerequisites
 

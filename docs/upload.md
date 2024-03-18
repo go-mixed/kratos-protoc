@@ -2,16 +2,14 @@
 
 ## Feature
 
-- Request Body as file raw data
+- RAW data of the request body
 - Upload a file with the `multipart/form-data` request
 
 ## Example
 
-All the file content is in the request body.
-
 ### 1. Copy proto files to your project
 
-- `protoc-gen-go-http/pb/http/options.proto` -> `your_project/third_party/http/options.proto`
+`protoc-gen-go-http/pb/http/options.proto` -> `your_project/third_party/http/options.proto`
 
 ### 2. Set "custom_request" to `true` in the `api/xxx.proto` file
 

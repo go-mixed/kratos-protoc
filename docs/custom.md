@@ -10,7 +10,7 @@ and you can parse the request body with your own logic
 
 ### 1. Copy proto files to your project
 
-- `protoc-gen-go-http/pb/http/options.proto` -> `your_project/third_party/http/options.proto`
+`protoc-gen-go-http/pb/http/options.proto` -> `your_project/third_party/http/options.proto`
 
 ### 2. Write `xxx.proto` like this:
 

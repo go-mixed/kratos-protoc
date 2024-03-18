@@ -6,8 +6,7 @@ And define the named middleware in the `http.Server` of kratos
 
 ## 1. Copy proto files to your project
 
-- `protoc-gen-go-http/pb/middleware/middleware.proto` -> `your_project/third_party/middleware/middleware.proto`
-
+`protoc-gen-go-http/pb/middleware/middleware.proto` -> `your_project/third_party/middleware/middleware.proto`
 
 ## 2. Write `xxx.proto` like this:
 
