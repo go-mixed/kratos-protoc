@@ -51,12 +51,12 @@ func _{{$svrType}}_{{.Name}}{{.Num}}_HTTP_Handler(srv {{$svrType}}HTTPServer) fu
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
 			res, err := srv.{{.Name}}(ctx, req.(*{{.Request}}))
 			if res == nil { // return nil for interface{} (nil ptr wont be nil if it cast to interface{})
-                return nil, err
-            }
-            return res, err
+				return nil, err
+			}
+			return res, err
 		})
 
-	    httpCtx := context.WithValue(ctx, "httpContext", ctx)
+		httpCtx := context.WithValue(ctx, "httpContext", ctx)
 		out, err := h(httpCtx, &in)
 		if err != nil {
 			return err
@@ -64,8 +64,8 @@ func _{{$svrType}}_{{.Name}}{{.Num}}_HTTP_Handler(srv {{$svrType}}HTTPServer) fu
 
 		{{- if .HttpOptions.CustomResponse}}
 		if out == nil { // skip response if out is nil and "http.options.custom_response" is true
-            return nil
-        }
+			return nil
+		}
 		{{- end}}
 
 		reply, _ := out.(*{{.Reply}})
