@@ -146,7 +146,7 @@ func (f *uploadFile) Seek(offset int64, whence int) (int64, error) {
     if f.file == nil {
         return 0, errors.New("Can't seek in a closed file")
     }
-    return f.Seek(offset, whence)
+    return f.file.Seek(offset, whence)
 }
 
 func (f *uploadFile) Close() error {
