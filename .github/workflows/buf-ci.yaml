@@ -1,6 +1,8 @@
 name: Buf CI
 on:
   push:
+    paths:
+      - 'protoc-gen-go-http/pb'
   pull_request:
     types: [opened, synchronize, reopened, labeled, unlabeled]
   delete:
