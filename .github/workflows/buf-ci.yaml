@@ -1,8 +1,8 @@
 name: Buf CI
 on:
   push:
-    paths-ignore:
-      - 'protoc-gen-go-http/examples/**'
+    paths:
+      - 'protoc-gen-go-http/**'
   pull_request:
     types: [opened, synchronize, reopened, labeled, unlabeled]
   delete:
@@ -14,6 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - run: buf dep update
       - uses: bufbuild/buf-action@v1
         with:
           token: ${{ secrets.BUF_TOKEN }}
