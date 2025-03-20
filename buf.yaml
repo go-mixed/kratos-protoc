@@ -1,6 +1,6 @@
 version: v2
 modules:
-  - path: protoc-gen-go-http/
+  - path: protoc-gen-go-http/pb
     name: buf.build/mixed/protoc-gen-go-http
 lint:
   use:
@@ -8,3 +8,4 @@ lint:
 deps:
   - buf.build/googleapis/googleapis
   - buf.build/kratos-go/kratos
+  - buf.build/mixed/protoc-gen-go-http
