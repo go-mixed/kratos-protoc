@@ -1,8 +1,6 @@
 name: Buf CI
 on:
   push:
-    paths:
-      - 'protoc-gen-go-http/**'
     paths-ignore:
       - 'protoc-gen-go-http/examples/**'
   pull_request:
