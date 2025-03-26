@@ -4,7 +4,7 @@ package http;
 
 import "google/protobuf/descriptor.proto";
 
-option go_package = "github.com/go-mixed/kratos-protoc/protoc-gen-go-http/pb/http;http";
+option go_package = "github.com/go-mixed/kratos-protoc/protoc-gen-go-http/pb/http";
 
 
 message HttpOptions {

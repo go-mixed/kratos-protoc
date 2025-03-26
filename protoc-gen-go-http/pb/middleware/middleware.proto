@@ -4,7 +4,7 @@ package middleware;
 
 import "google/protobuf/descriptor.proto";
 
-option go_package = "github.com/go-mixed/kratos-protoc/protoc-gen-go-http/pb/middleware;middleware";
+option go_package = "github.com/go-mixed/kratos-protoc/protoc-gen-go-http/pb/middleware";
 
 
 message MiddlewareCaller {
