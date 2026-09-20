@@ -2,24 +2,25 @@ package main
 
 import (
 	"fmt"
-	httpPb "github.com/go-mixed/kratos-protoc/protoc-gen-go-http/pb/http"
-	"github.com/go-mixed/kratos-protoc/protoc-gen-go-http/pb/middleware"
+	"net/http"
+	"os"
+	"regexp"
+	"strings"
+
+	httpPb "github.com/go-mixed/kratos-protoc/protoc-gen-go-http/v2/pb/http"
+	"github.com/go-mixed/kratos-protoc/protoc-gen-go-http/v2/pb/middleware"
 	"google.golang.org/genproto/googleapis/api/annotations"
 	"google.golang.org/protobuf/compiler/protogen"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/reflect/protoreflect"
 	"google.golang.org/protobuf/types/descriptorpb"
-	"net/http"
-	"os"
-	"regexp"
-	"strings"
 )
 
 const (
 	contextPackage         = protogen.GoImportPath("context")
 	transportHTTPPackage   = protogen.GoImportPath("github.com/go-kratos/kratos/v2/transport/http")
 	bindingPackage         = protogen.GoImportPath("github.com/go-kratos/kratos/v2/transport/http/binding")
-	namedMiddlewarePackage = protogen.GoImportPath("github.com/go-mixed/kratos-protoc/namedMiddleware")
+	namedMiddlewarePackage = protogen.GoImportPath("github.com/go-mixed/kratos-protoc/v2/namedMiddleware")
 )
 
 var methodSets = make(map[string]int)
@@ -254,6 +255,12 @@ func buildMethodDesc(g *protogen.GeneratedFile, m *protogen.Method, method, path
 	comment := m.Comments.Leading.String() + m.Comments.Trailing.String()
 	if comment != "" {
 		comment = "// " + m.GoName + strings.TrimPrefix(strings.TrimSuffix(comment, "\n"), "//")
+	}
+	if m.Desc.Options().(*descriptorpb.MethodOptions).GetDeprecated() {
+		if comment != "" {
+			comment += "\n"
+		}
+		comment += deprecationComment
 	}
 	return &methodDesc{
 		Name:         m.GoName,

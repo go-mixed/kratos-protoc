@@ -76,6 +76,9 @@ func _{{$svrType}}_{{.Name}}{{.Num}}_HTTP_Handler(srv {{$svrType}}HTTPServer) fu
 
 type {{.ServiceType}}HTTPClient interface {
 {{- range .MethodSets}}
+	{{- if ne .Comment ""}}
+	{{.Comment}}
+	{{- end}}
 	{{.Name}}(ctx context.Context, req *{{.Request}}, opts ...http.CallOption) (rsp *{{.Reply}}, err error)
 {{- end}}
 }
@@ -89,6 +92,9 @@ func New{{.ServiceType}}HTTPClient (client *http.Client) {{.ServiceType}}HTTPCli
 }
 
 {{range .MethodSets}}
+{{- if ne .Comment ""}}
+{{.Comment}}
+{{- end}}
 func (c *{{$svrType}}HTTPClientImpl) {{.Name}}(ctx context.Context, in *{{.Request}}, opts ...http.CallOption) (*{{.Reply}}, error) {
 	var out {{.Reply}}
 	pattern := "{{.Path}}"

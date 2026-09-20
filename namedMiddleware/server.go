@@ -2,8 +2,9 @@ package namedMiddleware
 
 import (
 	"context"
-	kratosHttp "github.com/go-kratos/kratos/v2/transport/http"
 	"net/http"
+
+	kratosHttp "github.com/go-kratos/kratos/v2/transport/http"
 )
 
 // enableNamedMiddleware handler of http.Server

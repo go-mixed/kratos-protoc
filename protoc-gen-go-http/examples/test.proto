@@ -6,7 +6,7 @@ import "google/api/annotations.proto";
 import "middleware/middleware.proto";
 import "http/options.proto";
 
-option go_package = "github.com/go-mixed/kratos-protoc/protoc-gen-go-http/examples;examples";
+option go_package = "github.com/go-mixed/kratos-protoc/protoc-gen-go-http/v2/examples;examples";
 
 service TestService {
   // 企业登录

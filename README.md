@@ -28,7 +28,7 @@ go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
 ```
 3. Build & Install `protoc-gen-go-http`
 ```bash
-go install github.com/go-mixed/kratos-protoc/protoc-gen-go-http@latest
+go install github.com/go-mixed/kratos-protoc/protoc-gen-go-http/v2@latest
 ```
 
 **NO NEED** to install official `kratos/protoc-gen-go-http`.
